@@ -1,222 +1,422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#070b14" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>TRADING AGENT HQ  � Nifty 500 Desk</title>
-  <link rel="manifest" href="manifest.json" />
-  <script src="https://cloudflare.com"></script>
-  <style>
-    :root {
-      --bg: #070b14;
-      --header: #0b1120;
-      --card: #0f172a;
-      --border: #1e293b;
-      --cyan: #22d3ee;
-      --green: #10b981;
-      --amber: #f59e0b;
-      --purple: #a855f7;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-    }
-    body.light-mode {
-      --bg: #f1f5f9;
-      --header: #ffffff;
-      --card: #ffffff;
-      --border: #cbd5e1;
-      --cyan: #0284c7;
-      --text: #0f172a;
-      --muted: #475569;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 52px; transition: background 0.3s, color 0.3s; }
-
-    /* Header */
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 16px; background: var(--header); border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 900; gap: 8px;
-    }
-    .brand h1 { font-size: 1.2rem; letter-spacing: 1.5px; color: var(--cyan); font-weight: 800; }
-    .brand p { font-size: 0.68rem; color: var(--muted); }
-    .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-    .pill {
-      background: var(--card); border: 1px solid var(--border); padding: 4px 8px;
-      border-radius: 6px; font-size: 0.72rem; font-weight: 600;
-    }
-    .live-dot { color: var(--green); }
-    .audio-btn {
-      background: rgba(34, 211, 238, 0.15); border: 1px solid var(--cyan); color: var(--cyan);
-      padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.74rem;
-    }
-    .audio-btn.active { background: var(--cyan); color: #000; }
-
-    /* 3-Dot Menu */
-    .menu-wrapper { position: relative; }
-    .dots-btn {
-      background: var(--card); border: 1px solid var(--border); color: var(--text);
-      width: 34px; height: 34px; border-radius: 8px; font-size: 1.2rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .dropdown-menu {
-      display: none; position: absolute; right: 0; top: 42px; width: 230px;
-      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.6); z-index: 1000; overflow: hidden;
-    }
-    .dropdown-menu.show { display: block; }
-    .menu-item {
-      padding: 11px 14px; font-size: 0.84rem; display: flex; align-items: center;
-      justify-content: space-between; cursor: pointer; border-bottom: 1px solid var(--border);
-      color: var(--text);
-    }
-    .menu-item:last-child { border-bottom: none; }
-    .menu-item:hover { background: rgba(34, 211, 238, 0.1); }
-
-    /* 3D Office */
-    #office-container {
-      position: relative; width: 100%; height: 300px;
-      background: radial-gradient(circle at center, #111c33, #070b14);
-      border-bottom: 1px solid var(--border); overflow: hidden;
-    }
-    .voice-indicator {
-      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.9); border: 1px solid var(--cyan);
-      padding: 4px 12px; border-radius: 20px; font-size: 0.74rem; color: #22d3ee;
-      white-space: nowrap; pointer-events: none;
-    }
-
-    /* Tables */
-    .tables-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-      gap: 14px; padding: 14px 16px;
-    }
-    .card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-      padding: 12px; overflow-x: auto;
-    }
-    .card h2 { font-size: 0.86rem; margin-bottom: 8px; letter-spacing: 0.4px; }
-    .cash-title { color: var(--cyan); }
-    .fno-title { color: var(--amber); }
-    .multi-title { color: var(--purple); }
-
-    table { width: 100%; border-collapse: collapse; font-size: 0.76rem; text-align: left; }
-    th { color: var(--muted); padding: 6px 4px; border-bottom: 1px solid var(--border); }
-    td { padding: 7px 4px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
-    .badge { background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 2px 5px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; }
-    .strike-badge { background: rgba(245, 158, 11, 0.15); color: var(--amber); padding: 2px 5px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; }
-    .green { color: var(--green); font-weight: 600; }
-    .red { color: #ef4444; }
-
-    /* Info Dot (i) */
-    .info-dot {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 16px; height: 16px; border-radius: 50%; background: rgba(34, 211, 238, 0.18);
-      color: var(--cyan); border: 1px solid var(--cyan); font-size: 0.65rem;
-      font-weight: bold; cursor: pointer; margin-left: 4px; vertical-align: middle;
-    }
-
-    /* Modal */
-    .modal-backdrop {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78);
-      z-index: 1500; align-items: center; justify-content: center; padding: 16px;
-    }
-    .modal-box {
-      background: var(--card); border: 1px solid var(--cyan); padding: 20px;
-      border-radius: 12px; width: 100%; max-width: 420px; color: var(--text);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-    }
-    .modal-box h3 { color: var(--cyan); font-size: 1rem; margin-bottom: 10px; }
-    .modal-box p, .modal-box li { font-size: 0.84rem; line-height: 1.5; color: var(--text); margin-bottom: 8px; }
-    .modal-box ul { padding-left: 18px; margin-bottom: 12px; }
-    .close-btn {
-      background: var(--cyan); color: #000; border: none; padding: 7px 16px;
-      border-radius: 6px; font-weight: 700; cursor: pointer; float: right; margin-top: 6px;
-    }
-
-    /* Auto Lock Overlay (Day 21 & Day 366) */
-    #lock-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(7, 11, 20, 0.96);
-      backdrop-filter: blur(12px); z-index: 2000; flex-direction: column;
-      align-items: center; justify-content: center; text-align: center; padding: 20px;
-    }
-    .lock-box {
-      background: #0f172a; border: 1px solid #22d3ee; padding: 26px 20px;
-      border-radius: 14px; max-width: 390px; width: 100%; color: #f1f5f9;
-    }
-    .lock-box h2 { color: #22d3ee; margin-bottom: 10px; font-size: 1.15rem; }
-    .lock-box p { color: #94a3b8; font-size: 0.86rem; margin-bottom: 18px; line-height: 1.5; }
-    .pay-btn {
-      background: linear-gradient(90deg, #06b6d4, #10b981); color: #000; border: none;
-      padding: 12px 18px; border-radius: 8px; font-size: 0.95rem; font-weight: 800;
-      cursor: pointer; width: 100%;
-    }
-
-    /* Global News */
-    .news-ticker {
-      position: fixed; bottom: 0; left: 0; width: 100%; background: var(--header);
-      border-top: 1px solid var(--border); padding: 8px 12px; font-size: 0.76rem;
-      display: flex; align-items: center; gap: 8px; z-index: 800;
-    }
-    .news-tag { background: var(--amber); color: #000; font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem; white-space: nowrap; }
-    marquee { color: var(--text); }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#070b14" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>TRADING AGENT HQ • Nifty 500 Desk</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📈%3C/text%3E%3C/svg%3E" />
+<style>
+:root{--bg:#070b14;--header:#0b1120;--card:#0f172a;--border:#1e293b;--cyan:#22d3ee;--green:#10b981;--amber:#f59e0b;--purple:#a855f7;--text:#f1f5f9;--muted:#94a3b8}
+body.light-mode{--bg:#f1f5f9;--header:#fff;--card:#fff;--border:#cbd5e1;--cyan:#0284c7;--text:#0f172a;--muted:#475569}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+body{background:var(--bg);color:var(--text);overflow-x:hidden;padding-bottom:52px;transition:background .3s,color .3s}
+header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--header);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900;gap:8px}
+.brand h1{font-size:1.2rem;letter-spacing:1.5px;color:var(--cyan);font-weight:800}
+.brand p{font-size:.68rem;color:var(--muted)}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{background:var(--card);border:1px solid var(--border);padding:4px 8px;border-radius:6px;font-size:.72rem;font-weight:600}
+.live-dot{color:var(--green)}
+.audio-btn{background:rgba(34,211,238,.15);border:1px solid var(--cyan);color:var(--cyan);padding:5px 10px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.74rem}
+.audio-btn.active{background:var(--cyan);color:#000}
+.menu-wrapper{position:relative}
+.dots-btn{background:var(--card);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dropdown-menu{display:none;position:absolute;right:0;top:42px;width:230px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.6);z-index:1000;overflow:hidden}
+.dropdown-menu.show{display:block}
+.menu-item{padding:11px 14px;font-size:.84rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid var(--border);color:var(--text)}
+.menu-item:last-child{border-bottom:none}
+.menu-item:hover{background:rgba(34,211,238,.1)}
+#office-container{position:relative;width:100%;height:380px;background:radial-gradient(circle at center,#111c33,#070b14);border-bottom:1px solid var(--border);overflow:hidden}
+#office-container canvas{display:block;width:100%;height:100%}
+.voice-indicator{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,.9);border:1px solid var(--cyan);padding:4px 12px;border-radius:20px;font-size:.74rem;color:#22d3ee;white-space:nowrap;pointer-events:none;max-width:95%;overflow:hidden;text-overflow:ellipsis}
+.chat{margin:14px 16px 0}#chat-log{max-height:180px;overflow-y:auto}.msg{font-size:.78rem;line-height:1.5;padding:3px 0;border-bottom:1px solid rgba(148,163,184,.1)}.who{font-weight:700}
+.info-dot{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(34,211,238,.18);color:var(--cyan);border:1px solid var(--cyan);font-size:.65rem;font-weight:700;cursor:pointer;margin-left:4px;vertical-align:middle}
+.tag{text-align:center;line-height:1.15;position:absolute;font-size:.58rem;padding:1px 6px;border-radius:8px;background:rgba(15,23,42,.85);color:#fff;border:1px solid #22d3ee;transform:translate(-50%,-50%);pointer-events:none;z-index:4;white-space:nowrap;left:50%;top:50%}
+.bubble{position:absolute;display:none;max-width:150px;background:rgba(15,23,42,.95);border:1px solid #22d3ee;color:#f1f5f9;font-size:.64rem;line-height:1.35;padding:4px 7px;border-radius:8px;pointer-events:none;transform:translate(-50%,-100%);z-index:5;left:50%;top:50%}
+.tables-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;padding:14px 16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;overflow-x:auto}
+.card h2{font-size:.86rem;margin-bottom:8px;letter-spacing:.4px}
+.cash-title{color:var(--cyan)}.fno-title{color:var(--amber)}.multi-title{color:var(--purple)}
+table{width:100%;border-collapse:collapse;font-size:.76rem;text-align:left}
+th{color:var(--muted);padding:6px 4px;border-bottom:1px solid var(--border)}
+td{padding:7px 4px;border-bottom:1px solid rgba(148,163,184,.1);white-space:nowrap}
+.badge{background:rgba(16,185,129,.15);color:var(--green);padding:2px 5px;border-radius:4px;font-size:.68rem;font-weight:700}
+.strike-badge{background:rgba(245,158,11,.15);color:var(--amber);padding:2px 5px;border-radius:4px;font-size:.68rem;font-weight:700}
+.green{color:var(--green);font-weight:600}.red{color:#ef4444}
+.note{font-size:.68rem;color:var(--muted);padding:0 16px 10px}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1500;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--card);border:1px solid var(--cyan);padding:20px;border-radius:12px;width:100%;max-width:420px;color:var(--text);box-shadow:0 15px 35px rgba(0,0,0,.8)}
+.modal-box h3{color:var(--cyan);font-size:1rem;margin-bottom:10px}
+.modal-box p{font-size:.84rem;line-height:1.5;margin-bottom:8px}
+.close-btn{background:var(--cyan);color:#000;border:none;padding:7px 16px;border-radius:6px;font-weight:700;cursor:pointer;float:right;margin-top:6px}
+#lock-overlay{display:none;position:fixed;inset:0;background:rgba(7,11,20,.96);backdrop-filter:blur(12px);z-index:2000;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.lock-box{background:#0f172a;border:1px solid #22d3ee;padding:26px 20px;border-radius:14px;max-width:390px;width:100%;color:#f1f5f9}
+.lock-box h2{color:#22d3ee;margin-bottom:10px;font-size:1.15rem}
+.lock-box p{color:#94a3b8;font-size:.86rem;margin-bottom:18px;line-height:1.5}
+.pay-btn{background:linear-gradient(90deg,#06b6d4,#10b981);color:#000;border:none;padding:12px 18px;border-radius:8px;font-size:.95rem;font-weight:800;cursor:pointer;width:100%}
+.news-ticker{position:fixed;bottom:0;left:0;width:100%;background:var(--header);border-top:1px solid var(--border);padding:8px 12px;font-size:.76rem;display:flex;align-items:center;gap:8px;z-index:800;overflow:hidden}
+.news-tag{background:var(--amber);color:#000;font-weight:800;padding:2px 6px;border-radius:4px;font-size:.68rem;white-space:nowrap}
+.ticker-wrap{overflow:hidden;flex:1}
+.ticker-text{display:inline-block;white-space:nowrap;padding-left:100%;animation:scroll 40s linear infinite}
+@keyframes scroll{to{transform:translateX(-100%)}}
+</style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <h1>TRADING AGENT HQ</h1>
-      <p>NIFTY 500 DESK � CREATED BY RAJ BASKE</p>
-    </div>
-    <div class="header-right">
-      <div class="pill"><span class="live-dot">?</span> LIVE</div>
-      <div class="pill" id="nifty-pill">NIFTY: <span class="green">Syncing...</span></div>
-      <button id="audioToggle" class="audio-btn" onclick="toggleAgentVoice()">?? AGENT VOICE</button>
-      
-      <!-- 3-Dot Menu -->
-      <div class="menu-wrapper">
-        <button class="dots-btn" onclick="toggleMenu(event)" aria-label="Menu">?</button>
-        <div class="dropdown-menu" id="dropdownMenu">
-          <div class="menu-item" onclick="toggleTheme()">
-            <span>?? Light Mode</span>
-            <input type="checkbox" id="themeSwitch" style="pointer-events:none;" />
-          </div>
-          <div class="menu-item" onclick="openInfoModal('about')"><span>?? About Us</span></div>
-          <div class="menu-item" onclick="openInfoModal('desc')"><span>?? Description</span></div>
-          <div class="menu-item" onclick="openInfoModal('disclaimer')"><span>?? App Install Disclaimer</span></div>
-          <div class="menu-item" onclick="installPWA()"><span>?? Install App</span></div>
-          <div class="menu-item" onclick="triggerGoogleLogin()"><span>?? Login</span></div>
-        </div>
+<header>
+  <div class="brand"><h1>TRADINOV</h1><p>NIFTY 500 DESK • CREATED BY RAJ BASKE</p></div>
+  <div class="header-right">
+    <div class="pill"><span class="live-dot">●</span> LIVE</div>
+    <div class="pill" id="nifty-pill">NIFTY: <span class="green">Syncing...</span></div>
+    <div class="menu-wrapper">
+      <button class="dots-btn" id="dotsBtn" type="button" aria-label="Menu">⋮</button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item" data-act="theme"><span>☀️ Light Mode</span><input type="checkbox" id="themeSwitch" style="pointer-events:none" /></div>
+        <div class="menu-item" data-act="about"><span>ℹ️ About Us</span></div>
+        <div class="menu-item" data-act="desc"><span>📄 Description</span></div>
+        <div class="menu-item" data-act="disclaimer"><span>⚠️ App Install Disclaimer</span></div>
+        <div class="menu-item" data-act="install"><span>📲 Install App</span></div>
+        <div class="menu-item" data-act="login"><span>👤 Login</span></div>
       </div>
     </div>
-  </header>
-
-  <!-- 3D 7 Agents Room -->
-  <div id="office-container">
-    <div class="voice-indicator" id="active-speaker">??? 7 AI Agents Active � Tap AGENT VOICE for English audio</div>
   </div>
+</header>
 
-  <!-- 3 Scanners Tables -->
-  <div class="tables-grid" id="main-tables">
-    <div class="card">
-      <h2 class="cash-title">?? TOP 5 BULLISH SETUPS (CASH)</h2>
-      <table>
-        <thead><tr><th>STOCK</th><th>STATUS</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead>
-        <tbody id="cash-body"></tbody>
-      </table>
-    </div>
+<div id="office-container">
+  <div class="voice-indicator" id="active-speaker">👥 8 agents working in the hall</div>
+</div>
 
-    <div class="card">
-      <h2 class="fno-title">? TOP 5 STOCK F&O SETUPS</h2>
-      <table>
-        <thead><tr><th>STOCK</th><th>STRIKE</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead>
-        <tbody id="fno-body"></tbody>
-      </table>
-    </div>
+<div class="tables-grid" id="main-tables">
+  <div class="card">
+    <h2 class="cash-title">📈 TOP 5 BULLISH SETUPS (CASH)</h2>
+    <table><thead><tr><th>STOCK</th><th>STATUS</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead><tbody id="cash-body"></tbody></table>
+  </div>
+  <div class="card">
+    <h2 class="fno-title">⚡ TOP 5 STOCK F&amp;O SETUPS</h2>
+    <table><thead><tr><th>STOCK</th><th>STRIKE</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead><tbody id="fno-body"></tbody></table>
+  </div>
+  <div class="card">
+    <h2 class="multi-title">🚀 TOP 3 MULTIBAGGER (3-4 MONTHS)</h2>
+    <table><thead><tr><th>STOCK</th><th>BUY ZONE</th><th>SL</th><th>TARGET</th></tr></thead><tbody id="multi-body"></tbody></table>
+  </div>
+</div>
+<p class="note">Sample data shown for demo. Educational use only, not investment advice.</p>
 
-    <div class="card">
-      <h2 class="multi-title">?? TOP 3 MULTIBAGGER (3-4 MONTHS)</h2>
-      <table>
+<div class="modal-backdrop" id="modal"><div class="modal-box"><h3 id="modal-title"></h3><p id="modal-text"></p><button class="close-btn" type="button" id="modal-close">Close</button><div style="clear:both"></div></div></div>
+
+<div id="lock-overlay"><div class="lock-box">
+  <h2>🔒 Access Locked</h2>
+  <p>Your access period has ended. Please renew to continue using TRADINOV.</p>
+  <button class="pay-btn" type="button" id="payBtn">Renew Access</button>
+</div></div>
+
+<div class="news-ticker"><span class="news-tag">GLOBAL</span><div class="ticker-wrap"><span class="ticker-text" id="ticker">Markets update • Nifty 500 desk active • Watch global cues before trading</span></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  var $ = function(id){return document.getElementById(id);};
+
+  /* safe storage */
+  function sGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function sSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+  /* PWA manifest created in code (no manifest.json file needed) */
+  try{
+    var man={name:'TRADING AGENT HQ Nifty 500 Desk',short_name:'TRADINOV',start_url:'./',display:'standalone',background_color:'#070b14',theme_color:'#070b14',icons:[]};
+    var l=document.createElement('link');l.rel='manifest';
+    l.href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/json'}));
+    document.head.appendChild(l);
+  }catch(e){}
+
+  /* data */
+  var cash=[['RELIANCE',2950,2900,3010,3070,'Breakout above resistance with rising volume.'],['TCS',4120,4060,4190,4260,'Holding above 20-day average, higher highs and higher lows.'],['HDFCBANK',1690,1665,1720,1750,'Bounced from support with a strong bullish candle.'],['INFY',1840,1810,1875,1910,'Stronger than Nifty (relative strength) with steady volume.'],['ICICIBANK',1280,1258,1305,1330,'Sector momentum positive, price near fresh high.']];
+  var fno=[['SBIN','800 CE',18.5,12,26,34,'Premium is low versus target, trend is up with open interest build-up.'],['TATAMOTORS','1000 CE',22,15,30,40,'Strong momentum candle, strike is near the money.'],['AXISBANK','1200 CE',16,10,23,30,'Bank sector strength, small premium risk.'],['LT','3600 CE',45,30,62,80,'Breakout setup, good reward for the premium paid.'],['ITC','480 CE',6.5,4,9,12,'Slow steady trend, cheap premium and tight stoploss.']];
+  var multi=[['DIXON','13000-13500',12200,16500,'Strong long-term growth sector, price consolidating near buy zone.'],['KAYNES','5000-5300',4600,6800,'Uptrend intact, base formed, big upside to target.'],['POLYCAB','6500-6800',6100,8500,'Steady leader, pullback to support gives a good entry.']];
+  var ST={RELIANCE:'BREAKOUT',TCS:'UPTREND',HDFCBANK:'SUPPORT BOUNCE',INFY:'STRONG RS',ICICIBANK:'NEAR HIGH'};
+  var f=function(n){return Number(n).toLocaleString('en-IN');};
+  function dot(t,d){return '<span class="info-dot" data-t="'+t+'" data-d="'+d+'">i</span>';}
+  $('cash-body').innerHTML=cash.map(function(r){
+    var rr=((r[3]-r[1])/(r[1]-r[2])).toFixed(1);
+    return '<tr><td><b>'+r[0]+'</b></td><td><span class="badge">'+(ST[r[0]]||'SETUP')+'</span></td><td>'+f(r[1])+'</td><td class="red">'+f(r[2])+'</td><td class="green">'+f(r[3])+'</td><td class="green">'+f(r[4])+dot('Why buy '+r[0]+'?','BUY: '+r[5]+' TOP 5: best trend, volume and reward:risk (about '+rr+':1) in our scan.')+'</td></tr>';}).join('');
+  $('fno-body').innerHTML=fno.map(function(r){
+    var rr=((r[4]-r[2])/(r[2]-r[3])).toFixed(1);
+    return '<tr><td><b>'+r[0]+'</b></td><td><span class="strike-badge">'+r[1]+'</span></td><td>'+r[2]+'</td><td class="red">'+r[3]+'</td><td class="green">'+r[4]+'</td><td class="green">'+r[5]+dot('Why buy '+r[0]+' '+r[1]+'?','BUY: '+r[6]+' TOP 5: best momentum with low premium risk (about '+rr+':1 to target 1).')+'</td></tr>';}).join('');
+  $('multi-body').innerHTML=multi.map(function(r){
+    return '<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td class="red">'+f(r[2])+'</td><td class="green">'+f(r[3])+dot('Why '+r[0]+'?','BUY: '+r[4]+' TOP 3: strongest long-term (3-4 months) trend and upside in our scan.')+'</td></tr>';}).join('');
+  $('nifty-pill').innerHTML='NIFTY: <span class="green">Demo</span>';
+
+  /* menu */
+  var menu=$('dropdownMenu');
+  $('dotsBtn').addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('show');});
+  document.addEventListener('click',function(){menu.classList.remove('show');});
+
+  /* theme */
+  function setTheme(light){document.body.classList.toggle('light-mode',light);$('themeSwitch').checked=light;sSet('tn_theme',light?'light':'dark');}
+  setTheme(sGet('tn_theme')==='light');
+
+  /* modal */
+  var INFO={
+    about:['About Us','TRADINOV is a Nifty 500 trading desk created by Raj Baske, showing scanner ideas with a team of 8 AI agents (Analyst, Risk Officer, Warder, Strategist, Execution Desk, Stock F&O Master, Multibagger Operator and Trader).'],
+    desc:['Description','Three scanners: Top 5 bullish cash setups, Top 5 stock F&O setups and Top 3 multibagger ideas (3-4 months).'],
+    disclaimer:['App Install Disclaimer','This web app installs from your browser (Add to Home Screen). Content is for education only and is not SEBI-registered investment advice. Trading involves risk of loss.']
+  };
+  function openModal(t,d){$('modal-title').textContent=t;$('modal-text').textContent=d;$('modal').style.display='flex';}
+  function openInfo(k){openModal(INFO[k][0],INFO[k][1]);}
+  document.addEventListener('click',function(e){var d=e.target.closest&&e.target.closest('.info-dot');if(d)openModal(d.getAttribute('data-t'),d.getAttribute('data-d')+' (Sample logic, not advice.)');});
+  $('modal-close').addEventListener('click',function(){$('modal').style.display='none';});
+
+  /* install */
+  var deferred=null;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;});
+  function installPWA(){
+    if(deferred){deferred.prompt();deferred=null;}
+    else alert('Browser menu theke "Add to Home Screen" / "Install app" use korun.');
+  }
+
+  menu.addEventListener('click',function(e){
+    var it=e.target.closest('.menu-item');if(!it)return;
+    var a=it.getAttribute('data-act');
+    if(a==='theme')setTheme(!document.body.classList.contains('light-mode'));
+    else if(a==='install')installPWA();
+    else if(a==='login')alert('Google Login ekhono connect kora hoyni.');
+    else openInfo(a);
+  });
+
+  /* agents team engine: pairs walk to each other's desks and talk */
+  var agents=['Analyst','Risk Officer','Warder','Strategist','Execution Desk','Stock F&O Master','Multibagger Operator','Trader'];
+  var depts=['Research Lab','Risk Desk','Breadth Watch','Sector Watch','Execution Desk','F&O Desk','Multibagger Research','Trading Desk'];
+  var tags=['Analyst','Risk Officer','Warder','Strategist','Execution','⭐ F&O Master','Multibagger','Trader'];
+  var colors=['#22d3ee','#ef4444','#3b82f6','#a855f7','#f59e0b','#facc15','#10b981','#f472b6'];
+  var A={analyst:0,risk:1,warder:2,strat:3,exec:4,fno:5,multi:6,trader:7};
+  var NA=agents.length,people=[],bubbles=[],busy=[];
+  function pick(a){return a[Math.floor(Math.random()*a.length)];}
+  var obox=$('office-container');
+  agents.forEach(function(n,i){
+    var b=document.createElement('div');b.className='bubble';b.style.borderColor=colors[i];
+    obox.appendChild(b);bubbles.push(b);
+  });
+  function say(i,t){
+    var b=bubbles[i];b.innerHTML='<b style="color:'+colors[i]+'">'+agents[i]+'</b> <span style="opacity:.6">• '+depts[i]+'</span><br>';
+    b.appendChild(document.createTextNode(t));b.style.display='block';
+    clearTimeout(b._t);b._t=setTimeout(function(){b.style.display='none';},3500);
+    if(people[i])people[i].talk=Date.now()+3400;
+    $('active-speaker').textContent=window.THREE?'💬 '+agents[i]+' is talking':'💬 '+agents[i]+': '+t;
+  }
+  var H={
+    goTo:function(a,b,cb){setTimeout(cb,300);},
+    back:function(a,cb){setTimeout(cb,100);},
+    face:function(){},release:function(){}
+  };
+  function ex(a,b,lines){return {a:a,b:b,lines:lines};}
+  function rr1(c){return ((c[3]-c[1])/(c[1]-c[2])).toFixed(1);}
+  var makers=[
+    function(){var c=pick(cash);return ex(A.analyst,A.strat,[[0,c[0]+' confirmed in Research Lab: '+(ST[c[0]]||'setup')+'.'],[1,'Sector supports it. Keep on watchlist.']]);},
+    function(){return ex(A.warder,A.strat,[[0,'Breadth is positive. More stocks rising than falling.'],[1,'Good. We favour bullish setups today.']]);},
+    function(){return ex(A.warder,A.risk,[[0,'Breadth is weakening. Careful with fresh entries.'],[1,'I will reduce position size until it improves.']]);},
+    function(){var c=pick(cash);return ex(A.risk,A.trader,[[0,c[0]+' reward:risk is '+rr1(c)+':1. Risk only 1-2% capital.'],[1,'Understood. I will respect the stoploss.']]);},
+    function(){var c=pick(cash);return ex(A.exec,A.trader,[[0,'Order plan '+c[0]+': entry '+f(c[1])+', SL '+f(c[2])+'.'],[1,'Ready. I place it only on confirmation.']]);},
+    function(){var o=pick(fno);return ex(A.fno,A.trader,[[0,o[0]+' '+o[1]+' premium '+o[2]+', SL '+o[3]+', target '+o[4]+'.'],[1,'Noted. Entering on breakout only.']]);},
+    function(){var o=pick(fno);return ex(A.fno,A.analyst,[[0,'My scan found '+o[0]+' with open interest build-up.'],[1,'Research Lab confirms the trend. Great catch.']]);},
+    function(){return ex(A.fno,A.strat,[[0,'Never buy options near expiry. Time decay hurts fast.'],[1,'Smart rule. We follow it.'],[0,'Wait for confirmation, then enter small.']]);},
+    function(){var m=pick(multi);return ex(A.multi,A.analyst,[[0,m[0]+' is a multibagger candidate. Data collected.'],[1,'I will verify growth and debt in Research Lab.']]);},
+    function(){var m=pick(multi);return ex(A.multi,A.strat,[[0,m[0]+' target '+f(m[3])+' in 3-4 months.'],[1,'Sector Watch agrees. Sector is in focus.']]);},
+    function(){return ex(A.strat,A.exec,[[0,'Focus on the strongest sector today.'],[1,'Execution Desk will route orders there.']]);},
+    function(){var c=pick(cash);return ex(A.trader,A.risk,[[0,'Can I add to '+c[0]+' after Target 1?'],[1,'Only after moving stoploss to cost.']]);},
+    function(){return ex(A.strat,A.fno,[[0,'How can we improve our trading?'],[1,'Fewer, better trades. Journal every trade.']]);},
+    function(){return ex(A.risk,A.fno,[[0,'Daily loss limit is non-negotiable.'],[1,'Agreed. Protect capital first.']]);}
+  ];
+  function pickEx(){for(var k=0;k<30;k++){var m=pick(makers)();if(!busy[m.a]&&!busy[m.b])return m;}return null;}
+  function run(m,done){
+    busy[m.a]=busy[m.b]=true;
+    if(window.THREE)$('active-speaker').textContent='🚶 '+agents[m.a]+' is walking to '+agents[m.b];
+    H.goTo(m.a,m.b,function(){
+      H.face(m.a,m.b);H.face(m.b,m.a);
+      var i=0;
+      (function line(){
+        if(i>=m.lines.length){H.back(m.a,function(){H.release(m.b);busy[m.a]=busy[m.b]=false;done();});return;}
+        var L=m.lines[i++];say(L[0]?m.b:m.a,L[1]);setTimeout(line,3600);
+      })();
+    });
+  }
+  function loop(){
+    var m=pickEx();if(!m){setTimeout(loop,800);return;}
+    run(m,function(){setTimeout(loop,1000+Math.random()*1500);});
+  }
+  function startTeam(){loop();setTimeout(loop,2000);setTimeout(loop,4000);}
+
+  /* lock: 21 days trial, then yearly renewal (365 days) */
+  function checkLock(){
+    var DAY=86400000,now=Date.now();
+    var start=Number(sGet('tn_start'))||0;
+    if(!start){start=now;sSet('tn_start',String(start));}
+    var paidAt=Number(sGet('tn_paid'))||0;
+    var locked=paidAt?(now-paidAt>365*DAY):(now-start>21*DAY);
+    $('lock-overlay').style.display=locked?'flex':'none';
+  }
+  $('payBtn').addEventListener('click',function(){alert('Payment gateway ekhono connect kora hoyni.');});
+  checkLock();
+
+  /* 3D hall with big live screen and walking people */
+  var box=$('office-container'),TAU=Math.PI*2,RS=3.0,RD=2.25,RA=1.55;
+  function pol(r,th){return {x:r*Math.cos(th),z:r*Math.sin(th)};}
+  function angDiff(a,b){var d=a-b;while(d>Math.PI)d-=TAU;while(d<-Math.PI)d+=TAU;return d;}
+  function faceC(th){return Math.atan2(-Math.cos(th),-Math.sin(th));}
+  var TH=[];for(var k=0;k<NA;k++)TH.push(-Math.PI/2+k*TAU/NA);
+  var tagEls=[];
+  if(window.THREE){
+    try{
+      var scene=new THREE.Scene();
+      var cam=new THREE.PerspectiveCamera(52,box.clientWidth/box.clientHeight,.1,100);
+      cam.position.set(0,7,10.8);cam.lookAt(0,1.7,-1.5);
+      var r=new THREE.WebGLRenderer({antialias:true,alpha:true});
+      r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+      r.setSize(box.clientWidth,box.clientHeight);
+      box.insertBefore(r.domElement,box.firstChild);
+      scene.add(new THREE.AmbientLight(0xffffff,.85));
+      var dl=new THREE.DirectionalLight(0xffffff,.7);dl.position.set(3,8,5);scene.add(dl);
+      var M=function(c){return new THREE.MeshStandardMaterial({color:c});};
+      var mesh=function(g,c,x,y,z){var m=new THREE.Mesh(g,M(c));m.position.set(x,y,z);return m;};
+      /* hall: floor, carpet, back wall */
+      scene.add(mesh(new THREE.BoxGeometry(14,.2,13),0x0f172a,0,-.1,0));
+      scene.add(mesh(new THREE.CylinderGeometry(1.4,1.4,.02,40),0x1e3a5f,0,.02,0));
+      scene.add(mesh(new THREE.BoxGeometry(14,6,.2),0x0b1220,0,3,-6.3));
+      scene.add(mesh(new THREE.BoxGeometry(.2,6,13),0x0b1220,-7,3,0));
+      scene.add(mesh(new THREE.BoxGeometry(.2,6,13),0x0b1220,7,3,0));
+
+      /* big live screen (demo prices) */
+      var sc=document.createElement('canvas');sc.width=1024;sc.height=360;
+      var sx=sc.getContext('2d');
+      var ticks=cash.map(function(q){return {n:q[0],p:q[1],o:q[1]};}).concat(multi.map(function(q){var b=parseInt(q[1],10);return {n:q[0],p:b,o:b};}));
+      var nifty={p:100,o:100,h:[]};for(var z=0;z<60;z++)nifty.h.push(100);
+      function walk(o){o.p=o.p*(1+(Math.random()-.5)*.0035)+(o.o-o.p)*.02;}
+      function drawScreen(){
+        ticks.forEach(walk);walk(nifty);nifty.h.push(nifty.p);nifty.h.shift();
+        var w=1024,h=360,x=sx;
+        x.fillStyle='#060a14';x.fillRect(0,0,w,h);
+        x.fillStyle='#0b1730';x.fillRect(0,0,w,46);
+        x.fillStyle='#22d3ee';x.font='bold 24px sans-serif';x.textAlign='left';x.fillText('● LIVE MARKET • NIFTY 500 DESK (DEMO)',16,31);
+        x.fillStyle='#94a3b8';x.font='18px sans-serif';x.textAlign='right';x.fillText(new Date().toLocaleTimeString(),w-16,30);
+        x.strokeStyle='#1e293b';x.lineWidth=2;x.strokeRect(16,62,430,282);
+        var hist=nifty.h,mn=Math.min.apply(null,hist),mx=Math.max.apply(null,hist);if(mx-mn<.05){mx=mn+.05;}
+        var chg=(nifty.p/nifty.o-1)*100,up=chg>=0;
+        x.strokeStyle=up?'#10b981':'#ef4444';x.lineWidth=3;x.beginPath();
+        hist.forEach(function(v,i){var px=26+i*(410/(hist.length-1)),py=330-(v-mn)/(mx-mn)*170;if(i)x.lineTo(px,py);else x.moveTo(px,py);});x.stroke();
+        x.textAlign='left';x.fillStyle='#f1f5f9';x.font='bold 22px sans-serif';x.fillText('NIFTY 500 INDEX',28,92);
+        x.fillStyle=up?'#10b981':'#ef4444';x.font='bold 34px sans-serif';x.fillText((up?'▲ +':'▼ ')+chg.toFixed(2)+'%',28,134);
+        ticks.forEach(function(t,i){
+          var bx=466+(i%2)*288,by=62+((i/2)|0)*72,pc=(t.p/t.o-1)*100,u=pc>=0;
+          x.fillStyle='#0f172a';x.fillRect(bx,by,276,64);
+          x.fillStyle=u?'#10b981':'#ef4444';x.fillRect(bx,by,5,64);
+          x.fillStyle='#f1f5f9';x.font='bold 20px sans-serif';x.textAlign='left';x.fillText(t.n,bx+16,by+26);
+          x.font='bold 22px sans-serif';x.textAlign='right';x.fillText(t.p.toLocaleString('en-IN',{maximumFractionDigits:0}),bx+264,by+26);
+          x.fillStyle=u?'#10b981':'#ef4444';x.font='18px sans-serif';x.fillText((u?'▲ +':'▼ ')+pc.toFixed(2)+'%',bx+264,by+52);
+        });
+      }
+      drawScreen();
+      var tex=new THREE.CanvasTexture(sc);
+      scene.add(mesh(new THREE.BoxGeometry(8.6,3.2,.12),0x1e293b,0,3.7,-6.1));
+      var scrn=new THREE.Mesh(new THREE.PlaneGeometry(8.4,2.95),new THREE.MeshBasicMaterial({map:tex}));
+      scrn.position.set(0,3.7,-6.03);scene.add(scrn);
+      setInterval(function(){drawScreen();tex.needsUpdate=true;},800);
+
+      var shirts=[0x22d3ee,0xef4444,0x3b82f6,0xa855f7,0xf59e0b,0xfacc15,0x10b981,0xf472b6];
+      var skins=[0xf1c9a5,0xc68642,0xe0ac69,0x8d5524,0xf1c9a5,0xe0ac69,0xc68642,0xf1c9a5];
+      var hairs=[0x2b1b0e,0x111827,0x6b4423,0x111827,0x1f2937,0x7c2d12,0x2b1b0e,0x9ca3af];
+      function makePerson(i){
+        var g=new THREE.Group(),n=new THREE.Group();g.add(n);
+        n.add(mesh(new THREE.BoxGeometry(.5,.65,.28),shirts[i],0,1.02,0));
+        var head=new THREE.Group();head.position.y=1.58;n.add(head);
+        head.add(mesh(new THREE.SphereGeometry(.2,16,16),skins[i],0,0,0));
+        head.add(mesh(new THREE.SphereGeometry(.215,16,12,0,TAU,0,Math.PI*.55),hairs[i],0,.02,0));
+        if(i===5||i===1)head.add(mesh(new THREE.BoxGeometry(.4,.55,.12),hairs[i],0,-.17,-.14));
+        if(i===5)head.add(mesh(new THREE.ConeGeometry(.12,.2,5),0xfacc15,0,.3,0));
+        head.add(mesh(new THREE.SphereGeometry(.03,8,8),0x111111,-.07,.02,.18));
+        head.add(mesh(new THREE.SphereGeometry(.03,8,8),0x111111,.07,.02,.18));
+        if(i===3||i===7)n.add(mesh(new THREE.BoxGeometry(.07,.4,.02),0xdc2626,0,1.05,.15));
+        var legs=[],arms=[];
+        [-1,1].forEach(function(s){
+          var l=new THREE.Group();l.position.set(s*.13,.7,0);
+          l.add(mesh(new THREE.BoxGeometry(.17,.7,.2),0x1f2937,0,-.35,0));n.add(l);legs.push(l);
+          var a=new THREE.Group();a.position.set(s*.31,1.3,0);
+          a.add(mesh(new THREE.BoxGeometry(.13,.6,.14),shirts[i],0,-.3,0));
+          a.add(mesh(new THREE.SphereGeometry(.07,8,8),skins[i],0,-.64,0));n.add(a);arms.push(a);
+        });
+        scene.add(g);
+        return {g:g,n:n,head:head,legs:legs,arms:arms};
+      }
+      for(var i=0;i<NA;i++){
+        var th=TH[i],dp=pol(RD,th),sp=pol(RS,th),cp=pol(RS+.32,th),kp=pol(RD+.12,th);
+        var yaw=Math.atan2(Math.cos(th),Math.sin(th));
+        var desk=mesh(new THREE.BoxGeometry(1.0,.75,.55),0x1e293b,dp.x,.375,dp.z);desk.rotation.y=yaw;scene.add(desk);
+        var scr=mesh(new THREE.BoxGeometry(.62,.4,.04),0x0b1220,dp.x,1.12,dp.z);scr.rotation.y=yaw;scene.add(scr);
+        var glow=new THREE.Mesh(new THREE.PlaneGeometry(.54,.32),new THREE.MeshBasicMaterial({color:i%2?0x10b981:0x22d3ee}));
+        glow.position.set(dp.x+Math.cos(th)*.025,1.12,dp.z+Math.sin(th)*.025);glow.rotation.y=yaw;scene.add(glow);
+        var kb=mesh(new THREE.BoxGeometry(.4,.03,.14),0x475569,kp.x,.78,kp.z);kb.rotation.y=yaw;scene.add(kb);
+        scene.add(mesh(new THREE.CylinderGeometry(.28,.28,.07,16),0x334155,sp.x,.4,sp.z));
+        var cb=mesh(new THREE.BoxGeometry(.5,.55,.06),0x334155,cp.x,.7,cp.z);cb.rotation.y=yaw;scene.add(cb);
+        var p=makePerson(i);
+        people.push({p:p,x:sp.x,z:sp.z,yaw:faceC(th),tyaw:faceC(th),path:[],cb:null,sit:true,sitK:1,phase:0,talk:0});
+        var tg=document.createElement('div');tg.className='tag';tg.textContent=tags[i];tg.style.borderColor=colors[i];
+        box.appendChild(tg);tagEls.push(tg);
+      }
+      H.goTo=function(ai,bi,cb){
+        var a=people[ai],th=TH[ai],tb=TH[bi];a.sit=false;
+        a.path=[pol(RS,th+.36),pol(RA,th+.36),pol(1.8,tb+.36)];a.cb=cb;
+      };
+      H.face=function(ai,bi){var a=people[ai],b=people[bi];a.tyaw=Math.atan2(b.x-a.x,b.z-a.z);};
+      H.back=function(ai,cb){
+        var a=people[ai],th=TH[ai];
+        a.path=[pol(RA,th+.36),pol(RS,th+.36),pol(RS,th)];
+        a.cb=function(){a.sit=true;a.tyaw=faceC(th);cb();};
+      };
+      H.release=function(bi){people[bi].tyaw=faceC(TH[bi]);};
+
+      var vec=new THREE.Vector3(),last=performance.now();
+      (function frame(now){
+        requestAnimationFrame(frame);
+        var dt=Math.min(.05,(now-last)/1000);last=now;var t=now/1000,nowMs=Date.now();
+        var cw=box.clientWidth,ch=box.clientHeight;
+        people.forEach(function(a,i){
+          var moving=false;
+          if(a.path.length){
+            var tg=a.path[0],dx=tg.x-a.x,dz=tg.z-a.z,d=Math.hypot(dx,dz);
+            if(d<.06){a.path.shift();if(!a.path.length&&a.cb){var c=a.cb;a.cb=null;c();}}
+            else{var st=Math.min(d,2.2*dt);a.x+=dx/d*st;a.z+=dz/d*st;a.tyaw=Math.atan2(dx,dz);moving=true;a.phase+=dt*9;}
+          }
+          a.yaw-=angDiff(a.yaw,a.tyaw)*Math.min(1,dt*9);
+          a.sitK+=((a.sit&&!moving?1:0)-a.sitK)*Math.min(1,dt*6);
+          var sk=a.sitK,talking=nowMs<a.talk,P=a.p;
+          P.n.position.y=-.27*sk;
+          var wl=moving?Math.sin(a.phase)*.7:0;
+          P.legs[0].rotation.x=(1-sk)*wl+sk*-1.45;
+          P.legs[1].rotation.x=(1-sk)*-wl+sk*-1.45;
+          var s0=moving?-Math.sin(a.phase)*.6:(talking?-.5+Math.sin(t*4+i)*.35:-.08);
+          var s1=moving?Math.sin(a.phase)*.6:(talking?-.3+Math.cos(t*3.3+i)*.3:-.08);
+          P.arms[0].rotation.x=(1-sk)*s0+sk*(-1.15+(talking?0:Math.sin(t*16+i*2)*.07));
+          P.arms[1].rotation.x=(1-sk)*s1+sk*(-1.15+(talking?0:Math.cos(t*13+i)*.07));
+          P.head.rotation.x=talking?Math.sin(t*6+i)*.06:0;
+          P.g.position.set(a.x,0,a.z);P.g.rotation.y=a.yaw;
+          vec.set(a.x,1.95-.27*sk,a.z).project(cam);
+          var px=(vec.x*.5+.5)*cw,py=(-vec.y*.5+.5)*ch;
+          tagEls[i].style.left=px+'px';tagEls[i].style.top=py+'px';
+          bubbles[i].style.left=Math.max(80,Math.min(cw-80,px))+'px';
+          bubbles[i].style.top=Math.max(60,py-14)+'px';
+        });
+        r.render(scene,cam);
+      })(performance.now());
+      window.addEventListener('resize',function(){
+        cam.aspect=box.clientWidth/box.clientHeight;cam.updateProjectionMatrix();
+        r.setSize(box.clientWidth,box.clientHeight);
+      });
+    }catch(e){console.warn('3D disabled:',e);}
+  }
+  startTeam();
+})();
+</script>
+</body>
+</html>
