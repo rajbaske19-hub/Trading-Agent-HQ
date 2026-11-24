@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tradinov-v1';
+const CACHE_NAME = 'trading agent hq-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
