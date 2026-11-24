@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#070b14" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>TRADING AGENT HQ � Nifty 500 Desk</title>
+  <title>TRADING AGENT HQ  • Nifty 500 Desk</title>
   <link rel="manifest" href="manifest.json" />
   <script src="https://cloudflare.com"></script>
   <style>
@@ -169,26 +169,26 @@
   <header>
     <div class="brand">
       <h1>TRADING AGENT HQ</h1>
-      <p>NIFTY 500 DESK � CREATED BY RAJ BASKE</p>
+      <p>NIFTY 500 DESK • CREATED BY RAJ BASKE</p>
     </div>
     <div class="header-right">
-      <div class="pill"><span class="live-dot">?</span> LIVE</div>
+      <div class="pill"><span class="live-dot">●</span> LIVE</div>
       <div class="pill" id="nifty-pill">NIFTY: <span class="green">Syncing...</span></div>
-      <button id="audioToggle" class="audio-btn" onclick="toggleAgentVoice()">?? AGENT VOICE</button>
+      <button id="audioToggle" class="audio-btn" onclick="toggleAgentVoice()">🔇 AGENT VOICE</button>
       
       <!-- 3-Dot Menu -->
       <div class="menu-wrapper">
-        <button class="dots-btn" onclick="toggleMenu(event)" aria-label="Menu">?</button>
+        <button class="dots-btn" onclick="toggleMenu(event)" aria-label="Menu">⋮</button>
         <div class="dropdown-menu" id="dropdownMenu">
           <div class="menu-item" onclick="toggleTheme()">
-            <span>?? Light Mode</span>
+            <span>☀️ Light Mode</span>
             <input type="checkbox" id="themeSwitch" style="pointer-events:none;" />
           </div>
-          <div class="menu-item" onclick="openInfoModal('about')"><span>?? About Us</span></div>
-          <div class="menu-item" onclick="openInfoModal('desc')"><span>?? Description</span></div>
-          <div class="menu-item" onclick="openInfoModal('disclaimer')"><span>?? App Install Disclaimer</span></div>
-          <div class="menu-item" onclick="installPWA()"><span>?? Install App</span></div>
-          <div class="menu-item" onclick="triggerGoogleLogin()"><span>?? Login</span></div>
+          <div class="menu-item" onclick="openInfoModal('about')"><span>ℹ️ About Us</span></div>
+          <div class="menu-item" onclick="openInfoModal('desc')"><span>📄 Description</span></div>
+          <div class="menu-item" onclick="openInfoModal('disclaimer')"><span>⚠️ App Install Disclaimer</span></div>
+          <div class="menu-item" onclick="installPWA()"><span>📲 Install App</span></div>
+          <div class="menu-item" onclick="triggerGoogleLogin()"><span>👤 Login</span></div>
         </div>
       </div>
     </div>
@@ -196,13 +196,13 @@
 
   <!-- 3D 7 Agents Room -->
   <div id="office-container">
-    <div class="voice-indicator" id="active-speaker">??? 7 AI Agents Active � Tap AGENT VOICE for English audio</div>
+    <div class="voice-indicator" id="active-speaker">🎙️ 7 AI Agents Active • Tap AGENT VOICE for English audio</div>
   </div>
 
   <!-- 3 Scanners Tables -->
   <div class="tables-grid" id="main-tables">
     <div class="card">
-      <h2 class="cash-title">?? TOP 5 BULLISH SETUPS (CASH)</h2>
+      <h2 class="cash-title">📈 TOP 5 BULLISH SETUPS (CASH)</h2>
       <table>
         <thead><tr><th>STOCK</th><th>STATUS</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead>
         <tbody id="cash-body"></tbody>
@@ -210,7 +210,7 @@
     </div>
 
     <div class="card">
-      <h2 class="fno-title">? TOP 5 STOCK F&O SETUPS</h2>
+      <h2 class="fno-title">⚡ TOP 5 STOCK F&O SETUPS</h2>
       <table>
         <thead><tr><th>STOCK</th><th>STRIKE</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead>
         <tbody id="fno-body"></tbody>
@@ -218,5 +218,5 @@
     </div>
 
     <div class="card">
-      <h2 class="multi-title">?? TOP 3 MULTIBAGGER (3-4 MONTHS)</h2>
+      <h2 class="multi-title">🚀 TOP 3 MULTIBAGGER (3-4 MONTHS)</h2>
       <table>
