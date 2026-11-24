@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#070b14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>TRADING AGENT HQ  • Nifty 500 Desk</title>
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://cloudflare.com"></script>
+  <style>
+    :root {
+      --bg: #070b14;
+      --header: #0b1120;
+      --card: #0f172a;
+      --border: #1e293b;
+      --cyan: #22d3ee;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    body.light-mode {
+      --bg: #f1f5f9;
+      --header: #ffffff;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --cyan: #0284c7;
+      --text: #0f172a;
+      --muted: #475569;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 52px; transition: background 0.3s, color 0.3s; }
+
+    /* Header */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: var(--header); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 900; gap: 8px;
+    }
+    .brand h1 { font-size: 1.2rem; letter-spacing: 1.5px; color: var(--cyan); font-weight: 800; }
+    .brand p { font-size: 0.68rem; color: var(--muted); }
+    .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill {
+      background: var(--card); border: 1px solid var(--border); padding: 4px 8px;
+      border-radius: 6px; font-size: 0.72rem; font-weight: 600;
+    }
+    .live-dot { color: var(--green); }
+    .audio-btn {
+      background: rgba(34, 211, 238, 0.15); border: 1px solid var(--cyan); color: var(--cyan);
+      padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.74rem;
+    }
+    .audio-btn.active { background: var(--cyan); color: #000; }
+
+    /* 3-Dot Menu */
+    .menu-wrapper { position: relative; }
+    .dots-btn {
+      background: var(--card); border: 1px solid var(--border); color: var(--text);
+      width: 34px; height: 34px; border-radius: 8px; font-size: 1.2rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dropdown-menu {
+      display: none; position: absolute; right: 0; top: 42px; width: 230px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6); z-index: 1000; overflow: hidden;
+    }
+    .dropdown-menu.show { display: block; }
+    .menu-item {
+      padding: 11px 14px; font-size: 0.84rem; display: flex; align-items: center;
+      justify-content: space-between; cursor: pointer; border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item:hover { background: rgba(34, 211, 238, 0.1); }
+
+    /* 3D Office */
+    #office-container {
+      position: relative; width: 100%; height: 300px;
+      background: radial-gradient(circle at center, #111c33, #070b14);
+      border-bottom: 1px solid var(--border); overflow: hidden;
+    }
+    .voice-indicator {
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.9); border: 1px solid var(--cyan);
+      padding: 4px 12px; border-radius: 20px; font-size: 0.74rem; color: #22d3ee;
+      white-space: nowrap; pointer-events: none;
+    }
+
+    /* Tables */
+    .tables-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 14px; padding: 14px 16px;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; overflow-x: auto;
+    }
+    .card h2 { font-size: 0.86rem; margin-bottom: 8px; letter-spacing: 0.4px; }
+    .cash-title { color: var(--cyan); }
+    .fno-title { color: var(--amber); }
+    .multi-title { color: var(--purple); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.76rem; text-align: left; }
+    th { color: var(--muted); padding: 6px 4px; border-bottom: 1px solid var(--border); }
+    td { padding: 7px 4px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
+    .badge { background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 2px 5px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; }
+    .strike-badge { background: rgba(245, 158, 11, 0.15); color: var(--amber); padding: 2px 5px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; }
+    .green { color: var(--green); font-weight: 600; }
+    .red { color: #ef4444; }
+
+    /* Info Dot (i) */
+    .info-dot {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; border-radius: 50%; background: rgba(34, 211, 238, 0.18);
+      color: var(--cyan); border: 1px solid var(--cyan); font-size: 0.65rem;
+      font-weight: bold; cursor: pointer; margin-left: 4px; vertical-align: middle;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+      z-index: 1500; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-box {
+      background: var(--card); border: 1px solid var(--cyan); padding: 20px;
+      border-radius: 12px; width: 100%; max-width: 420px; color: var(--text);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+    }
+    .modal-box h3 { color: var(--cyan); font-size: 1rem; margin-bottom: 10px; }
+    .modal-box p, .modal-box li { font-size: 0.84rem; line-height: 1.5; color: var(--text); margin-bottom: 8px; }
+    .modal-box ul { padding-left: 18px; margin-bottom: 12px; }
+    .close-btn {
+      background: var(--cyan); color: #000; border: none; padding: 7px 16px;
+      border-radius: 6px; font-weight: 700; cursor: pointer; float: right; margin-top: 6px;
+    }
+
+    /* Auto Lock Overlay (Day 21 & Day 366) */
+    #lock-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(7, 11, 20, 0.96);
+      backdrop-filter: blur(12px); z-index: 2000; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center; padding: 20px;
+    }
+    .lock-box {
+      background: #0f172a; border: 1px solid #22d3ee; padding: 26px 20px;
+      border-radius: 14px; max-width: 390px; width: 100%; color: #f1f5f9;
+    }
+    .lock-box h2 { color: #22d3ee; margin-bottom: 10px; font-size: 1.15rem; }
+    .lock-box p { color: #94a3b8; font-size: 0.86rem; margin-bottom: 18px; line-height: 1.5; }
+    .pay-btn {
+      background: linear-gradient(90deg, #06b6d4, #10b981); color: #000; border: none;
+      padding: 12px 18px; border-radius: 8px; font-size: 0.95rem; font-weight: 800;
+      cursor: pointer; width: 100%;
+    }
+
+    /* Global News */
+    .news-ticker {
+      position: fixed; bottom: 0; left: 0; width: 100%; background: var(--header);
+      border-top: 1px solid var(--border); padding: 8px 12px; font-size: 0.76rem;
+      display: flex; align-items: center; gap: 8px; z-index: 800;
+    }
+    .news-tag { background: var(--amber); color: #000; font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem; white-space: nowrap; }
+    marquee { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <h1>TRADING AGENT HQ</h1>
+      <p>NIFTY 500 DESK • CREATED BY RAJ BASKE</p>
+    </div>
+    <div class="header-right">
+      <div class="pill"><span class="live-dot">?</span> LIVE</div>
+      <div class="pill" id="nifty-pill">NIFTY: <span class="green">Syncing...</span></div>
+      <button id="audioToggle" class="audio-btn" onclick="toggleAgentVoice()">?? AGENT VOICE</button>
+      
+      <!-- 3-Dot Menu -->
+      <div class="menu-wrapper">
+        <button class="dots-btn" onclick="toggleMenu(event)" aria-label="Menu">?</button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="menu-item" onclick="toggleTheme()">
+            <span>?? Light Mode</span>
+            <input type="checkbox" id="themeSwitch" style="pointer-events:none;" />
+          </div>
+          <div class="menu-item" onclick="openInfoModal('about')"><span>?? About Us</span></div>
+          <div class="menu-item" onclick="openInfoModal('desc')"><span>?? Description</span></div>
+          <div class="menu-item" onclick="openInfoModal('disclaimer')"><span>?? App Install Disclaimer</span></div>
+          <div class="menu-item" onclick="installPWA()"><span>?? Install App</span></div>
+          <div class="menu-item" onclick="triggerGoogleLogin()"><span>?? Login</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3D 7 Agents Room -->
+  <div id="office-container">
+    <div class="voice-indicator" id="active-speaker">??? 7 AI Agents Active • Tap AGENT VOICE for English audio</div>
+  </div>
+
+  <!-- 3 Scanners Tables -->
+  <div class="tables-grid" id="main-tables">
+    <div class="card">
+      <h2 class="cash-title">?? TOP 5 BULLISH SETUPS (CASH)</h2>
+      <table>
+        <thead><tr><th>STOCK</th><th>STATUS</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead>
+        <tbody id="cash-body"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2 class="fno-title">? TOP 5 STOCK F&O SETUPS</h2>
+      <table>
+        <thead><tr><th>STOCK</th><th>STRIKE</th><th>PRICE</th><th>SL</th><th>TARGET 1</th><th>TARGET 2</th></tr></thead>
+        <tbody id="fno-body"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2 class="multi-title">?? TOP 3 MULTIBAGGER (3-4 MONTHS)</h2>
+      <table>
